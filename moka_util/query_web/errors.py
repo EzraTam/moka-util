@@ -1,0 +1,2 @@
+class ResultError(Exception):
+    pass
