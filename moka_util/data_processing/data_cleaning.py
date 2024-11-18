@@ -1,8 +1,36 @@
 import pandas as pd
 
 
-def get_refunds(df: pd.DataFrame)->pd.DataFrame:
-    """Extract refunds from POS-Sales Data (MOKA) 
+def drop_unnecessary_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop columns which are not used in the analysis
+
+    Args:
+        df (pd.DataFrame): DF to be cleaned
+
+    Returns:
+        pd.DataFrame: Cleaned DF
+    """
+    df = df.drop(columns=["Outlet"])
+    df = df.drop(columns=["SKU"])
+    df = df.drop(columns=["Served By"])
+    df = df.drop(columns=["Brand"])
+    df = df.drop(columns=["Event Type"])
+    df = df.drop(columns=["Reason of Refund"])
+    df = df.drop(columns=["Modifier Applied"])
+    df = df.drop(
+        columns=[
+            "Discount Applied",
+            "Sales Type",
+            "Collected By",
+            "Customer",
+            "Payment Method",
+        ]
+    )
+    return df
+
+
+def get_refunds(df: pd.DataFrame) -> pd.DataFrame:
+    """Extract refunds from POS-Sales Data (MOKA)
 
     Args:
         df (pd.DataFrame): POS-Sales Data
@@ -15,7 +43,7 @@ def get_refunds(df: pd.DataFrame)->pd.DataFrame:
     return _refund
 
 
-def merge_duplicates_in_items(df: pd.DataFrame)->pd.DataFrame:
+def merge_duplicates_in_items(df: pd.DataFrame) -> pd.DataFrame:
     """In the POS-Sales data, there might be rows representing
     the same item and variant (within a transaction).
     This function is used to deduplicate such data
@@ -49,7 +77,7 @@ def merge_duplicates_in_items(df: pd.DataFrame)->pd.DataFrame:
     return df[_col_order]
 
 
-def clean_moka_data(df: pd.DataFrame)-> pd.DataFrame:
+def clean_moka_data(df: pd.DataFrame) -> pd.DataFrame:
     """Function to clean the POS-sales data obtained from MOKA
     Functionalities:
         - Deduplicate data
@@ -61,6 +89,10 @@ def clean_moka_data(df: pd.DataFrame)-> pd.DataFrame:
     Returns:
         pd.DataFrame: Cleaned data
     """
+    df["Date"] = pd.to_datetime(df["Date"], dayfirst=True)
+
+    df = drop_unnecessary_columns(df)
+
     _refund = get_refunds(df)
 
     df_not_refund = df.query("Refunds==0").reset_index(drop=True)
