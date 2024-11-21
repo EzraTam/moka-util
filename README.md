@@ -22,6 +22,22 @@ Functionalities planned to be implemented:
 
 - Add environment variable (MOKA_CREDENTIALS_PATH) containing the path to the credentials.json
 
+## If you use transform_moka_to_jurnal
+- add a json called 'jurnal_config.json' with entries:
+    - "general": General configurations containing the entries:
+        - "columns": Columns that should occur in the jurnal data
+    - "outlet": Specific outlet configurations with entries of the form:
+        - Key: Name of the outlet. You may specify this arbitrarily. Used only for reference.
+        - Value: A dictionary with entries:
+            - "name": Name used for customer name in the jurnal data
+            - "tax_name": Name used for tax name in the jurnal data
+            - "product_name_prefix": Prefix for the product name,
+            - "payment_method_account": List of payment methods with account codes of form:
+                - Key: Payment method
+                - Value: Account code
+            - "tag": Tag used for the outlet in jurnal
+- add the environment variable JURNAL_CONFIG_PATH specifying path to the jurnal_config.json
+
 # Using the Tests
 
 ## Before Start
