@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ["query_web_aether_credentials_path"] = os.environ[
+os.environ["MOKA_CREDENTIALS_PATH"] = os.environ[
     "TEST_QUERY_CREDENTIALS_PATH"
 ]
 
