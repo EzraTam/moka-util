@@ -23,7 +23,6 @@ def drop_unnecessary_columns(df: pd.DataFrame) -> pd.DataFrame:
             "Sales Type",
             "Collected By",
             "Customer",
-            "Payment Method",
         ]
     )
     return df
@@ -57,7 +56,7 @@ def merge_duplicates_in_items(df: pd.DataFrame) -> pd.DataFrame:
     _col_order = df.columns
     _cols_group = ["Receipt Number", "Items", "Variant"]
     _cols_max = ["Date", "Time"]
-    _cols_first = ["Category"]
+    _cols_first = ["Category","Payment Method"]
     _cols_sum = [
         "Quantity",
         "Gross Sales",
