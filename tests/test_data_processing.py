@@ -18,12 +18,12 @@ class Test(unittest.TestCase):
         df_cleaned = clean_moka_data(_data_raw)
         self.assertEqual(
             int(df_cleaned["Gross Sales"].sum()),
-            int(os.environ["GROSS_SALES_AMOUNT_TEST"]),
+            int(os.environ["GROSS_SALES_AMOUNT_VALIDATION"]),
             "Incorrect gross sales amount",
         )
         self.assertEqual(
             int(df_cleaned["Net Sales"].sum()),
-            int(os.environ["NET_SALES_AMOUNT_TEST"], "Incorrect net sales amount"),
+            int(os.environ["NET_SALES_AMOUNT_VALIDATION"], "Incorrect net sales amount"),
         )
 
 

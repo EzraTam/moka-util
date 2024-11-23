@@ -3,3 +3,4 @@ data
 config
 poetry.lock
 tests/.env
+notebooks

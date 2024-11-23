@@ -11,7 +11,7 @@ import requests
 
 from moka_util.query_web.errors import ResultError
 
-path_credentials = os.environ["query_web_aether_credentials_path"]
+path_credentials = os.environ["MOKA_CREDENTIALS_PATH"]
 
 # Load credentials.json
 with open(path_credentials, encoding="utf-8") as f:
