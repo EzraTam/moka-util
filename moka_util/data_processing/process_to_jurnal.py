@@ -11,7 +11,7 @@ with open(path_jurnal_config, encoding="utf-8") as f:
 COLUMNS_JURNAL = jurnal_config["general"]["columns"]
 jurnal_outlet_sales_config = jurnal_config["outlet"]
 
-def tansform_moka_to_jurnal(df: pd.DataFrame , outlet_name:str) -> pd.DataFrame:
+def transform_moka_to_jurnal(df: pd.DataFrame , outlet_name:str) -> pd.DataFrame:
     """ Function to transform moka data (cleaned by clean_moka_data)
     for upload to jurnal (https://my.jurnal.id)
 
@@ -59,10 +59,10 @@ def tansform_moka_to_jurnal(df: pd.DataFrame , outlet_name:str) -> pd.DataFrame:
 
     # Discounts still to check!
     df['ProductDiscountRate(%)'] = df['Discounts']/df['Gross Sales']
-    df['ProductDiscountRate(%)'] = df['ProductDiscountRate(%)'].apply(lambda x: f'{round(float(x),2)}%')
+    df['ProductDiscountRate(%)'] = df['ProductDiscountRate(%)'].apply(lambda x: f'{round(float(x)*100,2)}%')
 
     df['TaxRate(%)'] = (df['Gratuity'] + df['Tax'])/(df['Gross Sales']-df['Discounts'])
-    df['TaxRate(%)'] = df['TaxRate(%)'].apply(lambda x: f'{round(float(x),2)}%')
+    df['TaxRate(%)'] = df['TaxRate(%)'].apply(lambda x: f'{round(float(x)*100,2)}%')
     df['TaxName'] = float('nan') if jurnal_outlet_sales_config[outlet_name]['tax_name'] == '' else jurnal_outlet_sales_config[outlet_name]['tax_name']
     df = df.drop(columns = ['Gratuity', 'Tax', 'Gross Sales', 'Discounts'])
 
