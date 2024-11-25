@@ -23,7 +23,7 @@ class Test(unittest.TestCase):
         )
         self.assertEqual(
             int(df_cleaned["Net Sales"].sum()),
-            int(os.environ["NET_SALES_AMOUNT_VALIDATION"], "Incorrect net sales amount"),
+            int(os.environ["NET_SALES_AMOUNT_VALIDATION"]), "Incorrect net sales amount",
         )
 
 
