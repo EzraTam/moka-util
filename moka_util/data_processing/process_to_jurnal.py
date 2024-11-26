@@ -1,5 +1,6 @@
 import os
 import json
+import math
 import pandas as pd
 path_jurnal_config = os.environ["JURNAL_CONFIG_PATH"]
 
@@ -59,9 +60,13 @@ def transform_moka_to_jurnal(df: pd.DataFrame , outlet_name:str) -> pd.DataFrame
 
     # Discounts still to check!
     df['ProductDiscountRate(%)'] = df['Discounts']/df['Gross Sales']
+    # Corner case if Gross Sales is 0 then set discount to 0%
+    df['ProductDiscountRate(%)'] = df['ProductDiscountRate(%)'].apply(lambda x: 0 if math.isnan(x) else x)
     df['ProductDiscountRate(%)'] = df['ProductDiscountRate(%)'].apply(lambda x: f'{round(float(x)*100,2)}%')
 
     df['TaxRate(%)'] = (df['Gratuity'] + df['Tax'])/(df['Gross Sales']-df['Discounts'])
+    # Corner Case if Discounts == Gross Sales
+    df['TaxRate(%)'] = df['TaxRate(%)'].apply(lambda x: 0 if math.isnan(x) else x)
     df['TaxRate(%)'] = df['TaxRate(%)'].apply(lambda x: f'{round(float(x)*100,2)}%')
     df['TaxName'] = float('nan') if jurnal_outlet_sales_config[outlet_name]['tax_name'] == '' else jurnal_outlet_sales_config[outlet_name]['tax_name']
     df = df.drop(columns = ['Gratuity', 'Tax', 'Gross Sales', 'Discounts'])
