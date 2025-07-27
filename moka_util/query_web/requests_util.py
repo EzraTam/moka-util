@@ -1,3 +1,5 @@
+# 28.07.2025: It seems that the server does not accept IPv6 connection.
+# --> Add timeout to switch to IPV4: https://stackoverflow.com/questions/62599036/python-requests-is-slow-and-takes-very-long-to-complete-http-or-https-request
 import json
 import logging
 import os
@@ -96,12 +98,18 @@ def query_sales_data(
         },
     }
 
+    # Make the request nice looking to avoid blacklisted
+    headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+
     # Login
     log.info("👮 Login to Moka with email: %s...", data_login["session"]["email"])
     with requests.Session() as x:
-        _response = x.post(url_login, json=data_login)
+        _response = x.post(url_login,headers=headers, json=data_login, timeout=5)
         access_token = _response.json()["access_token"]
     log.info("✅ Login Successful. Access Token obtained\n")
+
+    # Add access token to headers
+    headers["Authorization"] = access_token
 
     # Get ID-File for identifying download
     log.info(f"🙇 Requesting POS Data from {start_date} to {end_date}...")
@@ -109,7 +117,8 @@ def query_sales_data(
         _response = x.post(
             url_export,
             json=data_export_request,
-            headers={"Authorization": access_token},
+            headers=headers,
+            timeout=5,
         )
         id_file = _response.json()["id"]
 
@@ -124,7 +133,7 @@ def query_sales_data(
                 f"{url_export}/{id_file}"
             )
             _response = x.get(
-                url_request_download, headers={"Authorization": access_token}
+                url_request_download, headers=headers, timeout=5
             )
             _response_json = _response.json()
             _status = _response_json["status"]
