@@ -11,6 +11,8 @@ import requests
 
 from moka_util.query_web.errors import ResultError
 
+log = logging.getLogger(__name__)
+
 path_credentials = os.environ["MOKA_CREDENTIALS_PATH"]
 
 # Load credentials.json
@@ -54,7 +56,7 @@ def query_sales_data(
 
     if file_name is None:
         file_name = f"{outlet_name}__{start_date}__{end_date}.csv"
-        logging.warning(
+        log.warning(
             """file_name was not specified in the argument. """
             """Output file will be per default named as %s""",
             file_name,
@@ -62,7 +64,7 @@ def query_sales_data(
 
     if folder_path_resulting_data is None:
         folder_path_resulting_data = os.getcwd()
-        logging.warning(
+        log.warning(
             """folder_path_resulting_data. """
             """Output file will be saved per default in as %s""",
             folder_path_resulting_data,
@@ -95,14 +97,14 @@ def query_sales_data(
     }
 
     # Login
-    logging.info("👮 Login to Moka with email: %s...", data_login["session"]["email"])
+    log.info("👮 Login to Moka with email: %s...", data_login["session"]["email"])
     with requests.Session() as x:
         _response = x.post(url_login, json=data_login)
         access_token = _response.json()["access_token"]
-    logging.info("✅ Login Successful. Access Token obtained\n")
+    log.info("✅ Login Successful. Access Token obtained\n")
 
     # Get ID-File for identifying download
-    logging.info("🙇 Requesting POS Data from %s to %s...", start_date, end_date)
+    log.info(f"🙇 Requesting POS Data from {start_date} to {end_date}...")
     with requests.Session() as x:
         _response = x.post(
             url_export,
@@ -111,12 +113,12 @@ def query_sales_data(
         )
         id_file = _response.json()["id"]
 
-    logging.info("✅ Data ID obtained!\n")
+    log.info("✅ Data ID obtained!\n")
 
     _status = ""
 
     while _status != "SUCCESS":
-        logging.info("--> Send request for download link ...")
+        log.info("--> Send request for download link ...")
         with requests.Session() as x:
             url_request_download = (
                 f"{url_export}/{id_file}"
@@ -126,36 +128,36 @@ def query_sales_data(
             )
             _response_json = _response.json()
             _status = _response_json["status"]
-            logging.info("--> Current Status: %s", _status)
+            log.info(f"--> Current Status: {_status}")
             file_url = _response_json["file_url"]
         if _status != "SUCCESS":
-            logging.info(
+            log.info(
                 "--> Current Status is not equal SUCCESS. ⏰ Wait for 5 seconds to restart request...\n"
             )
             time.sleep(5)
         else:
-            logging.info("--> Download link obtained ✅\n")
+            log.info("--> Download link obtained ✅\n")
 
     _zip_data_nm = "data_temp.zip"
 
     # Download the retrieved files
-    logging.info("👷 Downloading data obtained...")
+    log.info("👷 Downloading data obtained...")
     _data_zip_temp_path = os.path.join(folder_path_resulting_data, _zip_data_nm)
     urllib.request.urlretrieve(file_url, _data_zip_temp_path)
-    logging.info("✅ Data in Zip-Format obtained!\n")
+    log.info("✅ Data in Zip-Format obtained!\n")
 
     # Unzip the corresponding file
     _folder_path_resulting_data_temp = os.path.join(folder_path_resulting_data, "temp")
-    logging.info("👷 Unzip the File...")
+    log.info("👷 Unzip the File...")
     with zipfile.ZipFile(_data_zip_temp_path, "r") as zip_ref:
         zip_ref.extractall(_folder_path_resulting_data_temp)
-    logging.info("✅ File unzipped\n")
+    log.info("✅ File unzipped\n")
 
-    logging.info("👷 Remove the zip!")
+    log.info("👷 Remove the zip!")
     os.remove(_data_zip_temp_path)
-    logging.info("✅ Successful!")
+    log.info("✅ Successful!")
 
-    logging.info("👷 Rename the obtained file...")
+    log.info("👷 Rename the obtained file...")
     file_obtained = os.listdir(_folder_path_resulting_data_temp)
 
     # Only one files!
