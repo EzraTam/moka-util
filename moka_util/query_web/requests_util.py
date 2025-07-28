@@ -60,16 +60,14 @@ def query_sales_data(
         file_name = f"{outlet_name}__{start_date}__{end_date}.csv"
         log.warning(
             """file_name was not specified in the argument. """
-            """Output file will be per default named as %s""",
-            file_name,
+            f"""Output file will be per default named as {file_name}"""
         )
 
     if folder_path_resulting_data is None:
         folder_path_resulting_data = os.getcwd()
         log.warning(
             """folder_path_resulting_data. """
-            """Output file will be saved per default in as %s""",
-            folder_path_resulting_data,
+            f"""Output file will be saved per default in as {folder_path_resulting_data}"""
         )
 
     # Input Validations
@@ -102,7 +100,7 @@ def query_sales_data(
     headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
 
     # Login
-    log.info("👮 Login to Moka with email: %s...", data_login["session"]["email"])
+    log.info(f'👮 Login to Moka with email: {data_login["session"]["email"]}...')
     with requests.Session() as x:
         _response = x.post(url_login,headers=headers, json=data_login, timeout=5)
         access_token = _response.json()["access_token"]
