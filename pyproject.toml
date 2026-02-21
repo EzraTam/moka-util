@@ -9,7 +9,6 @@ packages = [{include = "moka_util"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.32.3"
-black = "^24.10.0"
 pandas = "^2.2.3"
 
 
@@ -17,6 +16,8 @@ pandas = "^2.2.3"
 ipykernel = "^6.29.5"
 isort = "^5.13.2"
 python-dotenv = "^1.0.1"
+black = "^24.10.0"
+ipywidgets = "^8.1.7"
 
 [build-system]
 requires = ["poetry-core"]
